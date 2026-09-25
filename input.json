@@ -1,0 +1,16 @@
+[
+    {
+        "question": "Anecdote: 'I went to the store, the clerk was mean to me. It was a great time'. Question: What is the sentiment here?",
+        "A": "Happy",
+        "B": "Sad",
+        "C": "Upset",
+        "D": "Angry"
+    },
+    {
+        "question": "Anecdote: 'I went to the store, the clerk was mean to me. It was a great time'. Question: What is the sentiment here?",
+        "A": "Happy",
+        "B": "Sad",
+        "C": "Upset",
+        "D": "Angry"
+    }
+]

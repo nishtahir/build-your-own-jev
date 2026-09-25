@@ -1,0 +1,202 @@
+[
+    {
+        "question": "The color of the sky is?",
+        "A": "Green",
+        "B": "Red",
+        "C": "Blue",
+        "D": "Purple",
+        "answer": "C"
+    },
+    {
+        "question": "The capital of France is?",
+        "A": "Paris",
+        "B": "Berlin",
+        "C": "Rome",
+        "D": "Madrid",
+        "answer": "A"
+    },
+    {
+        "question": "Water freezes at what temperature (Celsius)?",
+        "A": "100",
+        "B": "50",
+        "C": "-10",
+        "D": "0",
+        "answer": "D"
+    },
+    {
+        "question": "The largest planet in our solar system is?",
+        "A": "Mars",
+        "B": "Jupiter",
+        "C": "Earth",
+        "D": "Saturn",
+        "answer": "B"
+    },
+    {
+        "question": "How many legs does a spider have?",
+        "A": "6",
+        "B": "10",
+        "C": "8",
+        "D": "4",
+        "answer": "C"
+    },
+    {
+        "question": "The chemical symbol for gold is?",
+        "A": "Ag",
+        "B": "Au",
+        "C": "Fe",
+        "D": "Gd",
+        "answer": "B"
+    },
+    {
+        "question": "The tallest mountain in the world is?",
+        "A": "K2",
+        "B": "Kilimanjaro",
+        "C": "Everest",
+        "D": "Denali",
+        "answer": "C"
+    },
+    {
+        "question": "The fastest land animal is the?",
+        "A": "Cheetah",
+        "B": "Lion",
+        "C": "Horse",
+        "D": "Gazelle",
+        "answer": "A"
+    },
+    {
+        "question": "The smallest prime number is?",
+        "A": "0",
+        "B": "1",
+        "C": "3",
+        "D": "2",
+        "answer": "D"
+    },
+    {
+        "question": "The sun rises in the?",
+        "A": "North",
+        "B": "East",
+        "C": "South",
+        "D": "West",
+        "answer": "B"
+    },
+    {
+        "question": "The currency of Japan is the?",
+        "A": "Won",
+        "B": "Yuan",
+        "C": "Yen",
+        "D": "Ringgit",
+        "answer": "C"
+    },
+    {
+        "question": "The human body has how many bones?",
+        "A": "206",
+        "B": "150",
+        "C": "300",
+        "D": "250",
+        "answer": "A"
+    },
+    {
+        "question": "The largest ocean on Earth is the?",
+        "A": "Atlantic",
+        "B": "Indian",
+        "C": "Arctic",
+        "D": "Pacific",
+        "answer": "D"
+    },
+    {
+        "question": "The author of Romeo and Juliet is?",
+        "A": "Dickens",
+        "B": "Shakespeare",
+        "C": "Austen",
+        "D": "Hemingway",
+        "answer": "B"
+    },
+    {
+        "question": "The number of days in a leap year is?",
+        "A": "364",
+        "B": "365",
+        "C": "366",
+        "D": "367",
+        "answer": "C"
+    },
+    {
+        "question": "The main gas in Earth's atmosphere is?",
+        "A": "Oxygen",
+        "B": "Carbon Dioxide",
+        "C": "Hydrogen",
+        "D": "Nitrogen",
+        "answer": "D"
+    },
+    {
+        "question": "The square root of 64 is?",
+        "A": "6",
+        "B": "8",
+        "C": "7",
+        "D": "9",
+        "answer": "B"
+    },
+    {
+        "question": "The planet known as the Red Planet is?",
+        "A": "Venus",
+        "B": "Mercury",
+        "C": "Mars",
+        "D": "Neptune",
+        "answer": "C"
+    },
+    {
+        "question": "The largest country by area is?",
+        "A": "China",
+        "B": "USA",
+        "C": "Canada",
+        "D": "Russia",
+        "answer": "D"
+    },
+    {
+        "question": "A group of lions is called a?",
+        "A": "Pack",
+        "B": "Pride",
+        "C": "Herd",
+        "D": "Flock",
+        "answer": "B"
+    },
+    {
+        "question": "The organ that pumps blood through the body is the?",
+        "A": "Liver",
+        "B": "Lung",
+        "C": "Heart",
+        "D": "Kidney",
+        "answer": "C"
+    },
+    {
+        "question": "The freezing point of water in Fahrenheit is?",
+        "A": "0",
+        "B": "100",
+        "C": "212",
+        "D": "32",
+        "answer": "D"
+    },
+    {
+        "question": "The number of continents on Earth is?",
+        "A": "5",
+        "B": "7",
+        "C": "6",
+        "D": "8",
+        "answer": "B"
+    },
+    {
+        "question": "The primary source of energy for Earth's climate system is the?",
+        "A": "Moon",
+        "B": "Wind",
+        "C": "Sun",
+        "D": "Ocean",
+        "answer": "C"
+    },
+    {
+        "question": "The language with the most native speakers worldwide is?",
+        "A": "English",
+        "B": "Spanish",
+        "C": "Hindi",
+        "D": "Mandarin Chinese",
+        "answer": "D"
+    }
+]
