@@ -11,3 +11,5 @@ wheels/
 
 checkpoint/
 dataset/
+# macOS
+.DS_Store
