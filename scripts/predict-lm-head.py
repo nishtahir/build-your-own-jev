@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import torch
+from huggingface_hub import snapshot_download
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model_name = "Qwen/Qwen3-1.7B"
@@ -14,7 +15,7 @@ parser.add_argument("--input", default="input.json")
 args = parser.parse_args()
 
 # the tokenizer is shared, the finetune only changes the lm head
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(snapshot_download(model_name))
 
 
 def load_model(path):

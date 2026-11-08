@@ -2,6 +2,7 @@ import argparse
 import json
 
 import torch
+from huggingface_hub import snapshot_download
 from torch import nn
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -9,7 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 options = ["A", "B", "C", "D", "E"]
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model", default="checkpoint")
+parser.add_argument("--model", default="Qwen/Qwen3-1.7B")
 parser.add_argument("--data", default="dataset/validation.jsonl")
 parser.add_argument("--limit", type=int, default=None)
 parser.add_argument("--batch-size", type=int, default=32)
@@ -17,7 +18,9 @@ args = parser.parse_args()
 
 # load the tokenizer and the model
 # left padding so the last position of every row is a real token
-tokenizer = AutoTokenizer.from_pretrained(args.model, padding_side="left")
+tokenizer = AutoTokenizer.from_pretrained(
+    snapshot_download(args.model), padding_side="left"
+)
 model = AutoModelForCausalLM.from_pretrained(
     args.model, torch_dtype="auto", device_map="auto"
 )
@@ -48,17 +51,23 @@ def option_logits(items):
     return logits[:, option_token_ids].float().cpu()
 
 
-def expected_calibration_error(probs, labels, bins=15):
+def calibration_bins(probs, labels, bins=10):
     confidences, predictions = probs.max(dim=-1)
     correct = (predictions == labels).float()
     edges = torch.linspace(0, 1, bins + 1)
-    ece = 0.0
+    rows = []
     for low, high in zip(edges[:-1], edges[1:]):
         in_bin = (confidences > low) & (confidences <= high)
-        if in_bin.any():
-            gap = (confidences[in_bin].mean() - correct[in_bin].mean()).abs()
-            ece += in_bin.float().mean() * gap
-    return float(ece)
+        count = int(in_bin.sum())
+        confidence = confidences[in_bin].mean().item() if count else 0.0
+        accuracy = correct[in_bin].mean().item() if count else 0.0
+        rows.append((low.item(), high.item(), count, confidence, accuracy))
+    return rows
+
+
+def expected_calibration_error(rows):
+    total = sum(count for _, _, count, _, _ in rows)
+    return sum(count / total * abs(conf - acc) for _, _, count, conf, acc in rows)
 
 
 with open(args.data) as f:
@@ -93,18 +102,24 @@ def closure():
 optimizer.step(closure)
 temperature = log_temperature.exp().item()
 
-# dividing logits by a positive scalar never changes the argmax, so accuracy
-# is untouched - only the confidence of the probabilities moves
+# dividing logits by a positive scalar never changes the argmax, so overall
+# accuracy is untouched - only the confidence of the probabilities, and with it
+# the bin each prediction lands in, moves
 accuracy = (logits.argmax(dim=-1) == labels).float().mean().item()
-print(f"accuracy: {accuracy:.4f}")
 for name, t in [("before", 1.0), ("after", temperature)]:
     scaled = logits / t
     probs = torch.softmax(scaled, dim=-1)
     nll = loss_fn(scaled, labels).item()
-    ece = expected_calibration_error(probs, labels)
-    print(f"{name}: temperature {t:.4f}, NLL {nll:.4f}, ECE {ece:.4f}")
+    rows = calibration_bins(probs, labels)
+    ece = expected_calibration_error(rows)
+    print(
+        f"{name}: temperature {t:.4f}, accuracy {accuracy:.4f}, NLL {nll:.4f}, ECE {ece:.4f}"
+    )
+    print(f"{'bin':>13}{'count':>8}{'confidence':>12}{'accuracy':>10}")
+    for low, high, count, conf, acc in rows:
+        print(f"({low:.2f}, {high:.2f}]{count:>8}{conf:>12.4f}{acc:>10.4f}")
 
-output = f"{args.model}/temperature.json"
+output = "temperature.json"
 with open(output, "w") as f:
     json.dump({"temperature": temperature}, f)
 print(f"saved temperature to {output}")

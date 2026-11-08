@@ -3,6 +3,7 @@ import json
 import random
 
 import torch
+from huggingface_hub import snapshot_download
 from torch import nn
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -21,7 +22,9 @@ args = parser.parse_args()
 
 # load the tokenizer and the model
 # left padding so the last position of every row is a real token
-tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
+tokenizer = AutoTokenizer.from_pretrained(
+    snapshot_download(model_name), padding_side="left"
+)
 model = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype="auto",

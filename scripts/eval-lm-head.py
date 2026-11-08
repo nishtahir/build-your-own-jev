@@ -2,6 +2,7 @@ import argparse
 import json
 
 import torch
+from huggingface_hub import snapshot_download
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -16,15 +17,17 @@ args = parser.parse_args()
 
 # load the tokenizer and the model
 # left padding so the last position of every row is a real token
-tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
+tokenizer = AutoTokenizer.from_pretrained(
+    snapshot_download(model_name), padding_side="left"
+)
 model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype="auto",
-    device_map="auto"
+    model_name, torch_dtype="auto", device_map="auto"
 )
 
 # the token the model would emit for each option as the first assistant token
-option_token_ids = [tokenizer.encode(opt, add_special_tokens=False)[0] for opt in options]
+option_token_ids = [
+    tokenizer.encode(opt, add_special_tokens=False)[0] for opt in options
+]
 
 
 def format_prompt(item):
@@ -32,14 +35,9 @@ def format_prompt(item):
     for opt in options:
         prompt += f"{opt}. {item[opt]}\n"
     prompt += "Answer:"
-    messages = [
-        {"role": "user", "content": prompt}
-    ]
+    messages = [{"role": "user", "content": prompt}]
     return tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True,
-        enable_thinking=False
+        messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
     )
 
 
@@ -56,20 +54,36 @@ def predict(items):
 with open(args.data) as f:
     data = [json.loads(line) for line in f]
 if args.limit is not None:
-    data = data[:args.limit]
+    data = data[: args.limit]
 
 # sort by length so each batch has minimal padding
 data.sort(key=lambda item: len(format_prompt(item)))
 
-correct = 0
-seen = 0
+predictions = []
+labels = []
 progress = tqdm(total=len(data), unit="answer")
 for start in range(0, len(data), args.batch_size):
-    batch = data[start:start + args.batch_size]
-    correct += sum(p == item["answer"] for p, item in zip(predict(batch), batch))
-    seen += len(batch)
+    batch = data[start : start + args.batch_size]
+    predictions += predict(batch)
+    labels += [item["answer"] for item in batch]
     progress.update(len(batch))
-    progress.set_postfix(accuracy=f"{correct / seen:.4f}")
+    progress.set_postfix(
+        accuracy=f"{sum(p == l for p, l in zip(predictions, labels)) / len(labels):.4f}"
+    )
 progress.close()
 
-print(f"accuracy: {correct}/{len(data)} = {correct / len(data):.4f}")
+print(f"{'':>8}{'precision':>10}{'recall':>10}{'f1':>10}{'support':>10}")
+f1s = []
+for opt in options:
+    tp = sum(p == opt and l == opt for p, l in zip(predictions, labels))
+    predicted = predictions.count(opt)
+    support = labels.count(opt)
+    precision = tp / predicted if predicted else 0.0
+    recall = tp / support if support else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    f1s.append(f1)
+    print(f"{opt:>8}{precision:>10.4f}{recall:>10.4f}{f1:>10.4f}{support:>10}")
+
+correct = sum(p == l for p, l in zip(predictions, labels))
+print(f"accuracy: {correct}/{len(labels)} = {correct / len(labels):.4f}")
+print(f"macro f1: {sum(f1s) / len(f1s):.4f}")
