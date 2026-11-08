@@ -1,10 +1,15 @@
 import argparse
 import json
 from pathlib import Path
+from typing import cast
 
 import torch
 from huggingface_hub import snapshot_download
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    PreTrainedTokenizerBase,
+)
 
 model_name = "Qwen/Qwen3-1.7B"
 options = ["A", "B", "C", "D", "E"]
@@ -15,7 +20,10 @@ parser.add_argument("--input", default="input.json")
 args = parser.parse_args()
 
 # the tokenizer is shared, the finetune only changes the lm head
-tokenizer = AutoTokenizer.from_pretrained(snapshot_download(model_name))
+tokenizer = cast(
+    PreTrainedTokenizerBase,
+    AutoTokenizer.from_pretrained(snapshot_download(model_name)),
+)
 
 
 def load_model(path):

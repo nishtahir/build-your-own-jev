@@ -16,7 +16,7 @@ def format_example(example: dict) -> dict:
 
 def main() -> None:
     DATASET_DIR.mkdir(exist_ok=True)
-    splits = load_dataset("tau/commonsense_qa", cache_dir=DATASET_DIR / "cache")
+    splits = load_dataset("tau/commonsense_qa", cache_dir=str(DATASET_DIR / "cache"))
 
     for split_name, split in splits.items():
         path = DATASET_DIR / f"{split_name}.jsonl"

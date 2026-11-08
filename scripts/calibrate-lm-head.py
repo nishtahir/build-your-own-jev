@@ -1,11 +1,16 @@
 import argparse
 import json
+from typing import cast
 
 import torch
 from huggingface_hub import snapshot_download
 from torch import nn
 from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    PreTrainedTokenizerBase,
+)
 
 options = ["A", "B", "C", "D", "E"]
 
@@ -18,8 +23,9 @@ args = parser.parse_args()
 
 # load the tokenizer and the model
 # left padding so the last position of every row is a real token
-tokenizer = AutoTokenizer.from_pretrained(
-    snapshot_download(args.model), padding_side="left"
+tokenizer = cast(
+    PreTrainedTokenizerBase,
+    AutoTokenizer.from_pretrained(snapshot_download(args.model), padding_side="left"),
 )
 model = AutoModelForCausalLM.from_pretrained(
     args.model, torch_dtype="auto", device_map="auto"
